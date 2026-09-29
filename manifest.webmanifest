@@ -1,0 +1,14 @@
+{
+  "name": "3D Заказы",
+  "short_name": "3D Заказы",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#ffffff",
+  "description": "Учёт заказов, расходов и прибыли для 3D-печати",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
