@@ -24,14 +24,18 @@ function monthOrders(){return db.orders.filter(o=>isThisMonth(o.createdAt))}
 function monthExtraExpenses(){return db.extraExpenses.filter(e=>isThisMonth(e.date))}
 function monthTotals(){const orders=monthOrders();const income=orders.reduce((s,o)=>s+Number(o.salePrice||0),0);const orderExpenses=orders.reduce((s,o)=>s+calcOrder(o).expenses,0);const extra=monthExtraExpenses().reduce((s,e)=>s+Number(e.amount||0),0);return {income,expenses:orderExpenses+extra,profit:income-orderExpenses-extra}}
 
-async function downloadCalendarEvent(o){
+function downloadCalendarEvent(o){
   if(!o?.due){alert('Сначала укажи срок готовности.');return}
   const start=new Date(o.due),end=new Date(start.getTime()+30*60000),reminder=Math.max(1,Number(o.reminderMinutes||30));
   const unit=reminder===1440?'за день':reminder>=60?`за ${reminder/60} ч`:`за ${reminder} мин`;
-  const body=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//3D Zakazy//RU','CALSCALE:GREGORIAN','METHOD:PUBLISH','BEGIN:VEVENT',`UID:${o.id}@3d-zakazy`,`DTSTAMP:${icsDate(new Date())}`,`DTSTART:${icsDate(start)}`,`DTEND:${icsDate(end)}`,`SUMMARY:${icsEscape('Готовность заказа: '+(o.item||'3D печать'))}`,`DESCRIPTION:${icsEscape((o.client||'')+' '+(o.phone||'')+'\n'+(o.notes||''))}`,'BEGIN:VALARM',`TRIGGER:-PT${reminder}M`,'ACTION:DISPLAY',`DESCRIPTION:Срок заказа ${unit}`,'END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
-  const file=new File([body],`3d-order-${(o.client||'client').replace(/[^a-zA-Zа-яА-Я0-9_-]+/g,'_')}.ics`,{type:'text/calendar'});
-  try{if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Срок заказа'});return}}catch(e){if(e?.name==='AbortError')return}
-  const url=URL.createObjectURL(new Blob([body],{type:'text/calendar;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)
+  const body=['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',`DTSTART:${icsDate(start)}`,`DTEND:${icsDate(end)}`,`SUMMARY:${icsEscape('Готовность заказа: '+(o.item||'3D печать'))}`,`DESCRIPTION:${icsEscape((o.client||'')+' '+(o.phone||'')+'\n'+(o.notes||''))}`,'BEGIN:VALARM',`TRIGGER:-PT${reminder}M`,'ACTION:DISPLAY',`DESCRIPTION:Срок заказа ${unit}`,'END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([body],{type:'text/calendar'}));
+  a.download='3d-order.ics';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 
 const content=document.getElementById('content'),title=document.getElementById('screenTitle'),todayLabel=document.getElementById('todayLabel'),sheet=document.getElementById('sheet'),backdrop=document.getElementById('modalBackdrop');
@@ -83,7 +87,7 @@ function saveMaterial(e){e.preventDefault();const v=Object.fromEntries(new FormD
 function openInventory(){openSheet(`${sheetHeader('Склад пластика')}<section class="card">${db.inventory.map(i=>{const pct=Math.min(100,Math.round(i.remaining/Math.max(1,i.spoolWeight)*100));return `<div class="table-row"><div><strong>${esc(i.type)} ${esc(i.color)}</strong><div class="muted">Остаток: ${Math.round(i.remaining)} г</div><div class="bar" style="margin-top:7px;width:180px"><span style="width:${pct}%"></span></div></div><div>${pct}%</div></div>`}).join('')||'<div class="empty">Склад пуст</div>'}<button class="secondary" style="margin-top:12px" onclick="closeSheet();openMaterialForm()">＋ Добавить материал</button></section>`)}
 function openElectricitySettings(){openSheet(`${sheetHeader('Электричество')}<form class="form" onsubmit="saveElectricitySettings(event)"><div class="form-group"><label>Стоимость 1 кВт·ч, ₽</label><input type="number" step="0.01" name="rate" value="${Number(db.settings.electricityRate||0)}" required></div><div class="reminder-note">Для заказа расход считается: тариф × мощность принтера × время печати.</div><button class="primary">Сохранить тариф</button></form>`)}
 function saveElectricitySettings(e){e.preventDefault();db.settings.electricityRate=Number(new FormData(e.target).get('rate')||0);save();closeSheet();render()}
-function openSettingsMenu(){openSheet(`${sheetHeader('Настройки')}<button class="secondary" onclick="closeSheet();openElectricitySettings()">⚡ Стоимость электричества</button><div style="height:8px"></div><button class="secondary" onclick="closeSheet();openInventory()">◫ Склад пластика</button><div style="height:8px"></div><button class="secondary" onclick="exportBackup()">Сделать резервную копию</button><div style="height:8px"></div><button class="secondary" onclick="document.getElementById('importInput').click();closeSheet()">Восстановить данные</button><div class="version-note">Версия 1.4</div>`)}
+function openSettingsMenu(){openSheet(`${sheetHeader('Настройки')}<button class="secondary" onclick="closeSheet();openElectricitySettings()">⚡ Стоимость электричества</button><div style="height:8px"></div><button class="secondary" onclick="closeSheet();openInventory()">◫ Склад пластика</button><div style="height:8px"></div><button class="secondary" onclick="exportBackup()">Сделать резервную копию</button><div style="height:8px"></div><button class="secondary" onclick="document.getElementById('importInput').click();closeSheet()">Восстановить данные</button><div class="version-note">Версия 1.5</div>`)}
 function exportBackup(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`3d-orders-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)}
 function startVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Используй диктовку клавиатуры iPhone в текстовом поле.');return}const r=new SR();r.lang='ru-RU';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const f=document.getElementById('orderForm');if(f)f.notes.value=(f.notes.value+' '+e.results[0][0].transcript).trim()};r.onerror=()=>alert('Не удалось распознать речь.');r.start()}
 function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
