@@ -267,3 +267,13 @@ body{background:radial-gradient(circle at 70% -10%,rgba(22,135,255,.16),transpar
 .mic.live{animation:voicePulse 1.25s ease-in-out infinite}
 .voice-original{margin-bottom:12px}
 @keyframes voicePulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(22,135,255,.36)}50%{transform:scale(1.06);box-shadow:0 0 0 18px rgba(22,135,255,0)}}
+
+/* v1.8.3 finance visibility fix */
+.kpi>div{
+  background:linear-gradient(145deg,#111925,#0d121a) !important;
+  border:1px solid #223047 !important;
+  color:#f5f7fb !important;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+.kpi>div .muted,.kpi>div span{color:#8993a3 !important}
+.kpi>div strong{color:#ffffff !important;text-shadow:0 1px 0 rgba(0,0,0,.15)}
