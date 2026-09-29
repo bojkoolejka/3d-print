@@ -100,3 +100,29 @@ button{cursor:pointer}
 .reminder-select{margin-left:auto;border:0;background:#e9e9ec;border-radius:10px;padding:8px 10px;color:#111;max-width:120px}
 .version-note{text-align:center;color:var(--muted);font-size:12px;margin-top:14px}
 @media (max-width:390px){.topbar .icon-btn{margin-top:20px}.tabbar{padding-left:4px;padding-right:4px}.fab{width:60px;height:60px}.date-time-grid{grid-template-columns:1fr 1fr;gap:8px}.reminder-select{max-width:112px}}
+
+/* v1.3: 4-button navigation, photos, electricity settings */
+.tabbar{grid-template-columns:1fr 1fr 1fr 1fr;height:calc(78px + env(safe-area-inset-bottom));}
+.tabbar .tab:nth-of-type(3){grid-column:4}
+.fab{grid-column:3;grid-row:1}
+.photo-thumb{object-fit:cover;display:block}
+.photo-picker{background:#f7f7f9;border:1px solid #ececef;border-radius:16px;padding:12px}
+.photo-picker-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.secondary.compact{width:auto;padding:9px 11px;border-radius:12px;font-size:13px}
+.tiny{font-size:12px}
+.photo-preview,.photo-gallery{display:flex;gap:9px;overflow:auto;margin-top:10px;padding-bottom:2px}
+.photo-chip{position:relative;flex:0 0 82px;width:82px;height:82px}
+.photo-chip img,.photo-gallery img{width:82px;height:82px;border-radius:14px;object-fit:cover;display:block}
+.photo-chip button{position:absolute;right:-4px;top:-4px;width:24px;height:24px;border:0;border-radius:50%;background:#171717;color:#fff;font-size:18px;line-height:1;padding:0}
+.photo-gallery{margin:0 0 12px}.photo-gallery img{width:110px;height:110px}
+.subcard{background:#f1f1f3;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px}
+@media (max-width:390px){.tabbar{grid-template-columns:1fr 1fr 1fr 1fr}.photo-gallery img{width:96px;height:96px}}
+
+
+/* v1.4 quick actions like the refrigerator app */
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 12px}
+.action-btn{border:0;border-radius:17px;min-height:64px;padding:10px 12px;font-size:23px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px}
+.action-btn span{font-size:15px;font-weight:750}
+.action-btn.call{background:#171717;color:#fff}
+.action-btn.calendar{background:#ececef;color:#111}
+@media (max-width:390px){.action-btn{min-height:60px}.action-btn span{font-size:14px}}
