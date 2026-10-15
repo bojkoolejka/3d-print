@@ -2,41 +2,19 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#070a0f" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#05080d" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="3D Заказы" />
-  <title>3D Заказы</title>
+  <meta name="apple-mobile-web-app-title" content="3D Print" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=184" />
+  <title>3D Print</title>
 </head>
 <body>
-  <div id="app" class="app-shell">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow" id="todayLabel"></div>
-        <h1 id="screenTitle">Сегодня</h1>
-      </div>
-      <button class="icon-btn" id="quickBackupBtn" aria-label="Резервная копия">⋯</button>
-    </header>
-
-    <main class="content" id="content"></main>
-
-    <nav class="tabbar" aria-label="Навигация">
-      <button class="tab active" data-screen="home"><span>⌂</span><small>Сегодня</small></button>
-      <button class="tab" data-screen="orders"><span>▤</span><small>Заказы</small></button>
-      <button class="fab" id="newOrderBtn" aria-label="Новый заказ">＋</button>
-      <button class="tab" data-screen="clients"><span>♙</span><small>Клиенты</small></button>
-      <button class="tab" data-screen="finance"><span>₽</span><small>Финансы</small></button>
-    </nav>
-  </div>
-
-  <div class="modal-backdrop hidden" id="modalBackdrop"></div>
-  <section class="sheet hidden" id="sheet" aria-modal="true" role="dialog"></section>
-
-  <input type="file" accept="application/json" id="importInput" class="hidden" />
-  <script src="app.js"></script>
+  <div id="app"></div>
+  <input id="photoPicker" type="file" accept="image/*" multiple hidden />
+  <script src="app.js?v=184"></script>
 </body>
 </html>
